@@ -1,6 +1,6 @@
 # artwork-deep-learning-api
 
-This an API to expose machine learning service for Arts. It is deployed in [here](https://art-retrieval-api.appspot.com/)
+This an API to expose machine learning service for Arts. It is deployed in [Google App Engine](https://art-retrieval-api.appspot.com/)
 
 It was developed using:
 - Python 3.
