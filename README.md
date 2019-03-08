@@ -1,12 +1,16 @@
 # artwork-deep-learning-api
 
-This an API to expose machine learning service for Arts. It is deployed in [Google App Engine](https://art-retrieval-api.appspot.com/)
+This an API to expose machine learning service for Arts. It is deployed in [here](https://art-retrieval-api.appspot.com/), using [Google App Engine](https://cloud.google.com/appengine/). App Engine allows to deploy your app without worry to configure the server stuff.
 
-It was developed using:
+The API was developed using:
 - Python 3.
+- Keras
+
+To expose the server, we use:
 - Flask
 - Flaskplus
-- Keras
+- Gunicorn
+
 
 ## Artwork retrieval
 
