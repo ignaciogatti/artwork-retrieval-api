@@ -1,3 +1,9 @@
-runtime: python37
+runtime: custom
 api_version: 1
 threadsafe: true
+env: flex
+
+skip_files:
+- static/model/train_mayors_style_encoded.csv
+- static/model/train_mayors_style_encode.npy
+- .git/
