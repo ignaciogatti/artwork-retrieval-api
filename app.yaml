@@ -3,6 +3,9 @@ api_version: 1
 threadsafe: true
 env: flex
 
+env_variables:
+    CLOUD_STORAGE_BUCKET: artwork-data
+
 skip_files:
 - static/model/train_mayors_style_encoded.csv
 - static/model/train_mayors_style_encode.npy

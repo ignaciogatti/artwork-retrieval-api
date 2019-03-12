@@ -6,6 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import cv2  # for image processing
 import os.path
 
+
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
 MODEL_PATH = os.path.join(MODEL_DIR, 'denoisy_encoder.h5')
 METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded.csv' )
@@ -24,6 +25,7 @@ def get_image(image_path, img_Width=128, img_Height=128):
 
 
 def get_sim_artworks(code):
+    
     #load data
     df_artworks = pd.read_csv( METADATA_FILE_NAME )
     artwork_code_matrix = np.load( MATRIX_FILE_NAME )
@@ -45,6 +47,7 @@ def get_sim_artworks(code):
 
 
 def predict(image_path):
+    
     image_norm = get_image(image_path)
     model = load_model(MODEL_PATH)
     code = model.predict(image_norm).reshape((-1,))
