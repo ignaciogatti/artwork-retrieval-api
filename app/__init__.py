@@ -3,6 +3,7 @@ from werkzeug.contrib.fixers import ProxyFix
 from .config import config_by_name
 import os.path
 from .main.utils.storage_utils import get_file_from_cloud_storage
+from .main.utils.logger import write_cloud_logger
 
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
@@ -20,14 +21,18 @@ def create_app(config_name):
     from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    #Set up cloud logger
+    write_cloud_logger('Hello world!')
 
     #get data model from storage
+    #Not necessary in flexible enviroments
+    '''
     if not( os.path.isfile( METADATA_FILE_NAME ) ):
         get_file_from_cloud_storage( METADATA_FILE_NAME )
     if not( os.path.isfile( MATRIX_FILE_NAME ) ):
         get_file_from_cloud_storage( MATRIX_FILE_NAME )
     if not( os.path.isfile( MODEL_PATH ) ):
         get_file_from_cloud_storage( MODEL_PATH )
-    
+    '''
 
     return app 

@@ -5,6 +5,8 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import cv2  # for image processing
 import os.path
+from os import listdir
+from ..utils.logger import write_cloud_logger
 
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
@@ -13,9 +15,16 @@ METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded.csv' )
 MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encode.npy' )
 
 
-def get_image(image_path, img_Width=128, img_Height=128):
+def get_image(filestr, img_Width=128, img_Height=128):
     #load image
-    image = cv2.imread(image_path)
+
+    #convert string data to numpy array
+    npimg = np.fromstring(filestr, np.uint8)
+    # convert numpy array to image
+    image = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+    
+    #image = cv2.imread(image_path)
+    write_cloud_logger('Image shape: ' + str(image.shape))
     image = cv2.resize(image, (img_Width, img_Height), interpolation=cv2.INTER_CUBIC)
     #normalize image
     image_norm = image * (1./255)
@@ -26,11 +35,15 @@ def get_image(image_path, img_Width=128, img_Height=128):
 
 def get_sim_artworks(code):
     
+    write_cloud_logger('Begin get sim artworks function...')
+    for f in listdir(MODEL_DIR):
+        write_cloud_logger(f)
     #load data
     df_artworks = pd.read_csv( METADATA_FILE_NAME )
     artwork_code_matrix = np.load( MATRIX_FILE_NAME )
 
     #get similarity matrix for image_id
+    write_cloud_logger('Before cosine sim')
     sim_matrix = cosine_similarity(code.reshape((1,-1)), artwork_code_matrix)
     
     #get top-n most similar
@@ -46,9 +59,13 @@ def get_sim_artworks(code):
     return list(df_top_ten['filename'].values)
 
 
-def predict(image_path):
+def predict(filestr):
     
-    image_norm = get_image(image_path)
+    write_cloud_logger('Begin predict method')
+    image_norm = get_image(filestr)
     model = load_model(MODEL_PATH)
+    write_cloud_logger('Before predict code image')
     code = model.predict(image_norm).reshape((-1,))
+    write_cloud_logger('After predict code image. Code shape: ' + str(code.shape))
+    #os.remove(image_path)
     return get_sim_artworks(code)

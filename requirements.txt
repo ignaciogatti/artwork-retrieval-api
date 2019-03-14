@@ -20,6 +20,7 @@ gast==0.2.2
 google-api-core==1.7.0
 google-auth==1.6.3
 google-cloud-core==0.29.1
+google-cloud-logging==1.10.0
 google-cloud-storage==1.14.0
 google-resumable-media==0.3.2
 googleapis-common-protos==1.5.8

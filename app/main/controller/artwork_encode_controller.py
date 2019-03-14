@@ -3,6 +3,8 @@ from flask_restplus import Resource
 from ..service.artwork_encode_service import predict
 from ..utils.dto import ArtworkDto
 from ..utils.parsers import file_upload
+from ..utils.logger import write_cloud_logger
+from ..utils.storage_utils import upload_blob
 import os.path
 from werkzeug.utils import secure_filename
 import numpy as np
@@ -24,6 +26,7 @@ class ArtworkCodeMatrix(Resource):
     @api.expect(file_upload)
     def post(self):
         """Encode artwork"""
+        write_cloud_logger('Begin Post method')
         data = file_upload.parse_args()
         if data['image_file'] == "":
             return {
@@ -35,9 +38,13 @@ class ArtworkCodeMatrix(Resource):
 
         if photo and self.allowed_file(photo.filename):
             filename = secure_filename(photo.filename)
-            photo.save(os.path.join(BASE_DIR,filename))
+            img_str = photo.read()
+            #Upload image to cloud storage
+            upload_blob(filename, img_str, photo.content_type)
+            
             return {
-                'sim_artwroks': predict(os.path.join(BASE_DIR,filename))
+                #pass image as str
+                'sim_artwroks': predict(img_str)
                 }
         
         return {

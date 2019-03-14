@@ -3,10 +3,12 @@ api_version: 1
 threadsafe: true
 env: flex
 
+manual_scaling:
+  instances: 1
+
 env_variables:
-    CLOUD_STORAGE_BUCKET: artwork-data
+    CLOUD_STORAGE_BUCKET: art-retrieval-api.appspot.com
+
 
 skip_files:
-- static/model/train_mayors_style_encoded.csv
-- static/model/train_mayors_style_encode.npy
 - .git/
