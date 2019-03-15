@@ -1,13 +1,17 @@
 runtime: custom
-api_version: 1
-threadsafe: true
 env: flex
 
 manual_scaling:
   instances: 1
 
+resources:
+  cpu: .5
+  memory_gb: 1.8
+  disk_size_gb: 10
+
+
 env_variables:
-    CLOUD_STORAGE_BUCKET: art-retrieval-api.appspot.com
+    CLOUD_STORAGE_BUCKET: art-retrieval-api-234614.appspot.com
 
 
 skip_files:
