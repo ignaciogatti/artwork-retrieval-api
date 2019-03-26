@@ -8,7 +8,7 @@ from .main.utils.logger import write_cloud_logger
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
 MODEL_PATH = os.path.join(MODEL_DIR, 'denoisy_encoder.h5')
-METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded.csv' )
+METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded_with_url.csv' )
 MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encode.npy' )
 
 

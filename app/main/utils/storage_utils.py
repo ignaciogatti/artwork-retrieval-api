@@ -4,7 +4,7 @@ import os
 
 # Configure this environment variable via app.yaml
 CLOUD_STORAGE_BUCKET = os.environ['CLOUD_STORAGE_BUCKET']
-#CLOUD_STORAGE_BUCKET = 'artwork-data'
+#CLOUD_STORAGE_BUCKET = 'art-retrieval-api-234614.appspot.com'
 
 
 def get_file_from_cloud_storage(filename):

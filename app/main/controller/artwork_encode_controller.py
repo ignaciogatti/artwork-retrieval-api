@@ -26,7 +26,6 @@ class ArtworkCodeMatrix(Resource):
     @api.expect(file_upload)
     def post(self):
         """Encode artwork"""
-        write_cloud_logger('Begin Post method')
         data = file_upload.parse_args()
         if data['image_file'] == "":
             return {
@@ -45,11 +44,19 @@ class ArtworkCodeMatrix(Resource):
             return {
                 #pass image as str
                 'sim_artwroks': predict(img_str)
-                }
+                }, {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+                    }
         
         return {
                 'data':'',
                 'message':'Something when wrong',
                 'status':'error'
-                }
+                }, {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+                    }
 
