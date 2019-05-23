@@ -21,6 +21,13 @@ def create_app(config_name):
     from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        return response
+
     #Set up cloud logger
     write_cloud_logger('Hello world!')
 
