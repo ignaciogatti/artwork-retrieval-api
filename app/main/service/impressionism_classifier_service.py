@@ -36,4 +36,4 @@ def predict(filestr):
     model = load_model(MODEL_PATH)
     result = model.predict(image_norm).reshape((-1,))
     #os.remove(image_path)
-    return str(result[0])
+    return result[0]
