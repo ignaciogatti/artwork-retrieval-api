@@ -40,10 +40,11 @@ class ImpressionismCLassifier(Resource):
             img_str = photo.read()
             #Upload image to cloud storage
             upload_blob(filename, img_str, photo.content_type)
-            
+            confidence = predict(img_str)
             return {
                 #pass image as str
-                'result': predict(img_str)
+                'impressionism': True if (confidence > 0.6) else False, 
+                'confidence': confidence
                 }
         
         return {
