@@ -1,6 +1,5 @@
 from flask import request
 from flask_restplus import Resource
-from ..service.artwork_encode_service import predict
 from ..utils.dto import ArtworkDto
 from ..utils.parsers import file_upload
 from ..utils.logger import write_cloud_logger
@@ -8,6 +7,8 @@ from ..utils.storage_utils import upload_blob
 import os.path
 from werkzeug.utils import secure_filename
 import numpy as np
+from ..service.artwork_encode_service import predict
+from ..service.artwork_retrieval_generic_service import Artwork_retrieval_base_service
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -17,6 +18,7 @@ api = ArtworkDto.api
 
 @api.route('/predict/')
 class ArtworkCodeMatrix(Resource):
+
 
     def allowed_file(self, filename):
         return ('.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS)
@@ -40,10 +42,11 @@ class ArtworkCodeMatrix(Resource):
             img_str = photo.read()
             #Upload image to cloud storage
             upload_blob(filename, img_str, photo.content_type)
+            artwork_retrieval_service = Artwork_retrieval_base_service()
             
             return {
                 #pass image as str
-                'sim_artworks': predict(img_str)
+                'sim_artworks': artwork_retrieval_service.predict(img_str)
                 }
         
         return {

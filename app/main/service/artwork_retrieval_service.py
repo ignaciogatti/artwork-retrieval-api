@@ -21,7 +21,7 @@ def get_sim_arworks(image_id):
     
     #get top-n most similar
     index_sorted = np.argsort(sim_matrix)
-    top_n = index_sorted[0][-11:-1]
+    top_n = index_sorted[0][-26:-1]
     top_n_matrix = np.take(a=sim_matrix, indices=top_n)
     
     df_top_n = df_artworks.iloc[top_n]
