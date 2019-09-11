@@ -1,14 +1,15 @@
 from flask import request
 from flask_restplus import Resource
+from werkzeug.utils import secure_filename
+import numpy as np
+import os.path
 from ..utils.dto import ArtworkDto
 from ..utils.parsers import file_upload
 from ..utils.logger import write_cloud_logger
 from ..utils.storage_utils import upload_blob
-import os.path
-from werkzeug.utils import secure_filename
-import numpy as np
-from ..service.artwork_encode_service import predict
-from ..service.artwork_retrieval_generic_service import Artwork_retrieval_base_service
+from ..service.artwork_retrieval_generic_service import Artwork_retrieval_service
+from ..utils.similarity_measure import Cosine_similarity
+from ..utils.sort_utils import Naive_sort
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -42,7 +43,11 @@ class ArtworkCodeMatrix(Resource):
             img_str = photo.read()
             #Upload image to cloud storage
             upload_blob(filename, img_str, photo.content_type)
-            artwork_retrieval_service = Artwork_retrieval_base_service()
+
+            #Define Artwork retrieval service
+            cosine_sim = Cosine_similarity()
+            sort_algorithm = Naive_sort()
+            artwork_retrieval_service = Artwork_retrieval_service(cosine_sim, sort_algorithm)
             
             return {
                 #pass image as str
