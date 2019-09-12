@@ -45,8 +45,8 @@ class ArtworkCodeMatrix(Resource):
             upload_blob(filename, img_str, photo.content_type)
 
             #Define Artwork retrieval service
-            sim_measure = Cosine_similarity()
-            #sim_measure = Wasserstein_similarity()
+            #sim_measure = Cosine_similarity()
+            sim_measure = Wasserstein_similarity()
             sort_algorithm = Naive_sort()
             artwork_retrieval_service = Artwork_retrieval_service(sim_measure, sort_algorithm)
             
