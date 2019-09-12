@@ -7,8 +7,8 @@ from ..utils.dto import ArtworkDto
 from ..utils.parsers import file_upload
 from ..utils.logger import write_cloud_logger
 from ..utils.storage_utils import upload_blob
-from ..service.artwork_retrieval_generic_service import Artwork_retrieval_service
-from ..utils.similarity_measure import Cosine_similarity
+from ..service.artwork_retrieval_service import Artwork_retrieval_service
+from ..utils.similarity_measure import Cosine_similarity, Wasserstein_similarity
 from ..utils.sort_utils import Naive_sort
 
 
@@ -45,9 +45,10 @@ class ArtworkCodeMatrix(Resource):
             upload_blob(filename, img_str, photo.content_type)
 
             #Define Artwork retrieval service
-            cosine_sim = Cosine_similarity()
+            sim_measure = Cosine_similarity()
+            #sim_measure = Wasserstein_similarity()
             sort_algorithm = Naive_sort()
-            artwork_retrieval_service = Artwork_retrieval_service(cosine_sim, sort_algorithm)
+            artwork_retrieval_service = Artwork_retrieval_service(sim_measure, sort_algorithm)
             
             return {
                 #pass image as str

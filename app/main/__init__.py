@@ -1,7 +1,7 @@
 from flask_restplus import Api
 from flask import Blueprint
 
-from .controller.artwork_encode_controller import api as encode_ns
+from .controller.artwork_retrieval_controller import api as encode_ns
 from .controller.impressionism_classifier_controller import api as impressionism_classifier_ns
 
 main = Blueprint('api', __name__)
