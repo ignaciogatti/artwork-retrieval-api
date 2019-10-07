@@ -9,7 +9,7 @@ from ..utils.logger import write_cloud_logger
 from ..utils.storage_utils import upload_blob
 from ..service.artwork_retrieval_service import Artwork_retrieval_service
 from ..utils.similarity_measure import Cosine_similarity, Wasserstein_similarity
-from ..utils.sort_utils import Naive_sort
+from ..utils.sort_utils import Naive_sort, Social_influence_sort
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -44,10 +44,15 @@ class ArtworkCodeMatrix(Resource):
             #Upload image to cloud storage
             upload_blob(filename, img_str, photo.content_type)
 
+            #Define similarity measure
+            sim_measure = Cosine_similarity()
+            #sim_measure = Wasserstein_similarity()
+
+            #Define sort algorithm
+            #sort_algorithm = Naive_sort()
+            sort_algorithm = Social_influence_sort(artist_source='Claude Monet')
+
             #Define Artwork retrieval service
-            #sim_measure = Cosine_similarity()
-            sim_measure = Wasserstein_similarity()
-            sort_algorithm = Naive_sort()
             artwork_retrieval_service = Artwork_retrieval_service(sim_measure, sort_algorithm)
             
             return {

@@ -11,9 +11,14 @@ from ..utils.image_utils import get_image
 
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
-MODEL_PATH = os.path.join(MODEL_DIR, 'denoisy_encoder.h5')
 METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded_with_url.csv' )
+#Wasserstein Auto-encoder
+WASSERSTEIN_PATH = os.path.join(MODEL_DIR, 'wasserstein_encoder.h5')
+WASSERSTEIN_MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_w_encoded.npy' )
+#Denoisy Auto-encoder
+MODEL_PATH = os.path.join(MODEL_DIR, 'denoisy_encoder.h5')
 MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encode.npy' )
+
 
 
 class Artwork_retrieval_service:
@@ -22,7 +27,13 @@ class Artwork_retrieval_service:
         self.name = "Artwork_retrieval_generic_service"
         #load data
         self.df_artworks = pd.read_csv( METADATA_FILE_NAME )
+        
+        #Denoisy Auto-encoder
         self.artwork_code_matrix = np.load( MATRIX_FILE_NAME )
+        
+        #Wasserstein Auto-encoder
+        #self.artwork_code_matrix = np.load( WASSERSTEIN_MATRIX_FILE_NAME )
+        
         self.sim_measure = sim_measure
         self.sort_algorithm = sort_algorithm
 
@@ -58,9 +69,15 @@ class Artwork_retrieval_service:
     def predict(self, filestr):
         
         image_norm = get_image(filestr)
+        #Denoisy Auto-encoder
         model = load_model(MODEL_PATH)
+        
+        #Wasserstein Auto-encoder
+        #model = load_model(WASSERSTEIN_PATH)
+        
         code = model.predict(image_norm).reshape((-1,))
         #os.remove(image_path)
+        
         return self.get_sim_artworks(code)
 
 
