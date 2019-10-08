@@ -50,7 +50,7 @@ class ArtworkCodeMatrix(Resource):
 
             #Define sort algorithm
             #sort_algorithm = Naive_sort()
-            sort_algorithm = Social_influence_sort(artist_source='Claude Monet')
+            sort_algorithm = Social_influence_sort()
 
             #Define Artwork retrieval service
             artwork_retrieval_service = Artwork_retrieval_service(sim_measure, sort_algorithm)
