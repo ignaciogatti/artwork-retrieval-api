@@ -4,12 +4,11 @@ from .config import config_by_name
 import os.path
 from .main.utils.storage_utils import get_file_from_cloud_storage
 from .main.utils.logger import write_cloud_logger
+import tarfile
 
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
-MODEL_PATH = os.path.join(MODEL_DIR, 'denoisy_encoder.h5')
-METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded_with_url.csv' )
-MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encode.npy' )
+INFLUENCE_GRAPH_COMPRESSED_PATH = os.path.join(MODEL_DIR, 'shortest_path_length.js.tar.gz')
 
 
 def create_app(config_name):
@@ -31,7 +30,6 @@ def create_app(config_name):
     #Set up cloud logger
     write_cloud_logger('Hello world!')
 
-    #get data model from storage
     #Not necessary in flexible enviroments
     '''
     if not( os.path.isfile( METADATA_FILE_NAME ) ):

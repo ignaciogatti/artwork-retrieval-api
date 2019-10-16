@@ -1,11 +1,11 @@
 import numpy as numpy
-import json
+import pickle
 import os.path
 from abc import ABC, abstractclassmethod
 import unicodedata
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
-INFLUENCE_GRAPH_PATH = os.path.join(MODEL_DIR, 'shortest_path_length.js')
+INFLUENCE_GRAPH_PATH = os.path.join(MODEL_DIR, 'shortest_path_length.pkl')
 
 class Base_sort(ABC):
 
@@ -23,9 +23,9 @@ class Naive_sort(Base_sort):
 class Social_influence_sort(Base_sort):
 
     def __init__(self, artist_source=''):
-        # Test load json file
-        with open(INFLUENCE_GRAPH_PATH) as json_file:
-            self.shortest_path_length = json.loads(json_file.read())
+        # Test load pickle file
+        with open(INFLUENCE_GRAPH_PATH, 'rb') as pickle_model:
+            self.shortest_path_length = pickle.load(pickle_model)
         print( len(self.shortest_path_length.keys()) ) 
         self.artist_ocurrence = 0
         self.artist_source = self.normalize_title(artist_source)
@@ -62,7 +62,7 @@ class Social_influence_sort(Base_sort):
     def get_sorted_artworks(self, df):
         #It is supposed that it will be the one with the closest cosine distance
         self.artist_source = self.get_artist_source(df)
-        print(self.artist_source)
+        #print(self.artist_source)
         self.artist_ocurrence = 0
         df['sim_influence'] = df.apply(
             lambda x: self.sim_influence(sim_distance=x['sim_distance'], 
