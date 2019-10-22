@@ -3,10 +3,11 @@ entrypoint: gunicorn -b :$PORT main:app --timeout 120
 #runtime: custom
 #env: flex
 
-instance_class: B4
+instance_class: B4_HIGHMEM
 basic_scaling:
   max_instances: 11
   idle_timeout: 10m
+
 
 env_variables:
     CLOUD_STORAGE_BUCKET: art-retrieval-api-234614.appspot.com

@@ -5,7 +5,7 @@ from abc import ABC, abstractclassmethod
 import unicodedata
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
-INFLUENCE_GRAPH_PATH = os.path.join(MODEL_DIR, 'shortest_path_length.pkl')
+INFLUENCE_GRAPH_PATH = os.path.join(MODEL_DIR, 'artist_shortest_path_length.pkl')
 
 class Base_sort(ABC):
 
@@ -42,8 +42,14 @@ class Social_influence_sort(Base_sort):
             artist_decay = 2 ** self.artist_ocurrence
             self.artist_ocurrence += 1
             return sim_distance + sim_distance * (1./artist_decay)
-        if artist_target in self.shortest_path_length[self.artist_source]:
-            return sim_distance + sim_distance * (1./self.shortest_path_length[self.artist_source][artist_target])
+        
+        #Sort artist name for policy to search in dictionary
+        sorted_artists = sorted([artist_target, self.artist_source])
+        #Check if the artist is in the graph
+        if not sorted_artists[0] in set(self.shortest_path_length.keys()):
+            return sim_distance + sim_distance * (1./100)
+        if sorted_artists[1] in self.shortest_path_length[sorted_artists[0]]:
+            return sim_distance + sim_distance * (1./self.shortest_path_length[sorted_artists[0]][sorted_artists[1]])
         else:
             return sim_distance + sim_distance * (1./100)
 

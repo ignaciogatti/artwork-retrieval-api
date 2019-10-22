@@ -4,11 +4,8 @@ from .config import config_by_name
 import os.path
 from .main.utils.storage_utils import get_file_from_cloud_storage
 from .main.utils.logger import write_cloud_logger
-import tarfile
 
 
-MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
-INFLUENCE_GRAPH_COMPRESSED_PATH = os.path.join(MODEL_DIR, 'shortest_path_length.js.tar.gz')
 
 
 def create_app(config_name):
@@ -30,14 +27,5 @@ def create_app(config_name):
     #Set up cloud logger
     write_cloud_logger('Hello world!')
 
-    #Not necessary in flexible enviroments
-    '''
-    if not( os.path.isfile( METADATA_FILE_NAME ) ):
-        get_file_from_cloud_storage( METADATA_FILE_NAME )
-    if not( os.path.isfile( MATRIX_FILE_NAME ) ):
-        get_file_from_cloud_storage( MATRIX_FILE_NAME )
-    if not( os.path.isfile( MODEL_PATH ) ):
-        get_file_from_cloud_storage( MODEL_PATH )
-    '''
 
     return app 
