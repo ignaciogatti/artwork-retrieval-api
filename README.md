@@ -6,7 +6,7 @@ This an API to expose machine learning service for Arts. It is deployed in [here
 
 The API was developed using:
 - Python 3.
-- Keras
+- Tensorflow 2.1
 
 To expose the server, we use:
 - Flask
@@ -16,8 +16,13 @@ To expose the server, we use:
 
 ## Artwork retrieval
 
+Our approach consists of a hybrid RS in which a user can submit an artwork of her interest, in the form of a digital image, and the RS will generate a list of artworks being related to the input image.  A relation between a given pair of images is established in terms of the visual contents of the images and their contexts. 
+Basically, we aim at combining a **visual analysis** of the artwork (e.g., color and composition palette) with a **semantic analysis** of the artwork's context (e.g., stylistic influences among painters).
+
 ![artwork-retrieval-motivation](https://github.com/ignaciogatti/art-deep-learning/blob/master/images/Artwork-retrieval.jpg)
 
-Artwork-retrieval api define the logic to search similar artworks using deep-autoencoders (defined on Auotencoder-artwork notebook). Basically, first we encode each image of the dataset it using a pre-trained encoder, obtaining a code matrix. Then, given an artwork, we encode it with the same encoder. Then, we look foward the most similar codes of the matrix. Finally, we take the top ten artworks associated to these codes. Punctually, here we use a similarity measure that combines cosine distance and social influence. Basically, the idea is to adjust the cosine distance taking into account how far away are the artists in the influence social graph (This graph was built using DBpedia Ontology).
+Internally, the RS relies on three building blocks in order to achieve its goal, as shown in Fig. First, we assume that a Deep Autoencoder is built, based on a predefined collection of artworks. Thus, when the user submits an image (*artwork<sub>target</sub>*), it gets codified using the **Deep Autoencoder**. Second, the encoded image is compared for similarity against a dataset of images, which have been encoded beforehand. Those images being most similar to the input image are selected and a ranking *S* is returned. Third, the selected images undergoes a filtering process based on a network of **influences** among the artworks' painters, which adjusts the values of the ranking. The final ranking *S* is returned to the user.
 
-To summarize, the endpoint (called predict) recibe an artwork as input and return a list of similar artworks.
+### Deep Autoencoder
+
+The *visual content* analysis relies on **Deep Autoencoders**. This is a DNN technique that is used for representing images in a low dimensional space. In other words, the goal of **the Deep Autoencoder** is to achieve an n-dimensional representation of the image (Encode<sub>layer</sub>) that contains its main features (For further information you can check this [link](https://www.deeplearningbook.org/contents/autoencoders.html)). 
