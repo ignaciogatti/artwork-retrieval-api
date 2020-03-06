@@ -67,7 +67,7 @@ Then, the similarity value of each artwork *a<sub>i</sub>* in *S* is weighted by
 
 With the adjusted values, the RS sorts *S* by moving the most similar artworks to the top of the ranking. Since we are interested in having diversity in the recommended set, sets of artworks of artworks that belong only to a few artists should be avoided. Thus, we use another coefficient that punishes artworks if the artist has another artworks in the recommended set. Let us suppose that we traverse *S* in order. 
 
-![img_eq](http://latex.codecogs.com/svg.latex?p%28a_i%29+%3D+%5Cfrac%7B1%7D%7B2%5E%7Bprevious%5C_occurrences%28artist_i%7D%29%7D)
+![img_eq](http://latex.codecogs.com/svg.latex?p%28a_i%29%3D%5Cfrac%7B1%7D%7B2%5E%7Bprevious%5C_occurrences%28artist_i%29%7D%7D)
 
 For each artwork *a<sub>i</sub>* the occurrences of the artist *artist<sub>i</sub>* are counted, and then **punish coefficient** is applied.
 
