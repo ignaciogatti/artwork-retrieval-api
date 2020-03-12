@@ -6,7 +6,7 @@ This an API to expose machine learning service for Arts. It is deployed in [here
 
 The API was developed using:
 - Python 3.
-- Tensorflow 2.1
+- Tensorflow 2.0b
 
 To expose the server, we use:
 - Flask
