@@ -1,5 +1,5 @@
 from flask import Flask
-from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 from .config import config_by_name
 import os.path
 from .main.utils.storage_utils import get_file_from_cloud_storage

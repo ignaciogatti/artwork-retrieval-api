@@ -1,6 +1,6 @@
 import tensorflow as tf
-from keras.models import load_model
-from keras.applications.inception_v3 import preprocess_input
+from tensorflow.python.keras.models import load_model
+from tensorflow.python.keras.applications.inception_v3 import preprocess_input
 import numpy as np
 import cv2  # for image processing
 import os.path
