@@ -1,0 +1,23 @@
+# Folder data #
+
+**/static
+**/train
+**/weights
+
+# python bitecodes #
+
+*.pyc
+
+# python cache #
+
+**/__pycache__
+
+# csv and numpy data files #
+
+*.csv
+*.npy
+*.h5
+*.js
+*.pkl
+/*.jpg
+
