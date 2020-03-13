@@ -7,11 +7,10 @@ import os.path
 from os import listdir
 from ..utils.logger import write_cloud_logger
 from ..utils.image_utils import get_image
-
+from .abstract_artwork_retrieval_service import Abstract_artwork_retrieval_service
 
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
-METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded_with_url.csv' )
 
 #Wasserstein Auto-encoder
 WASSERSTEIN_PATH = os.path.join(MODEL_DIR, 'wasserstein_encoder.h5')
@@ -37,46 +36,15 @@ model = denoisy_model
 
 
 
-class Artwork_retrieval_service:
+class Artwork_retrieval_service(Abstract_artwork_retrieval_service):
 
     def __init__(self, sim_measure, sort_algorithm):
-        self.name = "Artwork_retrieval_generic_service"
-        #load data
-        self.df_artworks = pd.read_csv( METADATA_FILE_NAME )
-        
+        super().__init__(sim_measure, sort_algorithm)
+        self.name = "Artwork_retrieval_generic_service"        
         #load matrix model
         self.artwork_code_matrix = np.load( model['matrix'] )
         
-        self.sim_measure = sim_measure
-        self.sort_algorithm = sort_algorithm
 
-
-    def get_sim_artworks(self, code):
-        
-        #get similarity matrix for image_id
-        sim_matrix = self.sim_measure.get_similarity_measure_matrix(code, self.artwork_code_matrix)
-        
-        #get top-n most similar
-        index_sorted = np.argsort(sim_matrix)
-        top_n = index_sorted[0][-100:]
-        top_n_matrix = np.take(a=sim_matrix, indices=top_n)
-        
-        df_top_n = self.df_artworks.iloc[top_n]
-        df_top_n['sim_distance'] = top_n_matrix
-        
-
-        df_top_ten = self.sort_algorithm.get_sorted_artworks(df_top_n)
-        df_top_ten = df_top_ten.dropna(subset=['imageUrl'])
-        df_top_ten = df_top_ten.head(25)
-        top_ten = df_top_ten[['title', 'artist', 'imageUrl']].transpose().to_dict()
-        values = list(top_ten.values())
-        
-        result = []
-        for i in range(len(top_ten)):
-            values[i]['id'] = list(top_ten.keys())[i]
-            result.append(values[i])
-
-        return result
 
 
     def predict(self, filestr):
@@ -84,10 +52,10 @@ class Artwork_retrieval_service:
         image_norm = get_image(filestr)
         #load Auto-encoder model
         autoencoder_model = load_model(model['model_encoder'])
-                
+         #Get code of the input image       
         code = autoencoder_model.predict(image_norm).reshape((-1,))
         #os.remove(image_path)
         
-        return self.get_sim_artworks(code)
+        return self.get_sim_artworks(code, self.artwork_code_matrix)
 
 
