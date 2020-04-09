@@ -10,7 +10,7 @@ CLOUD_STORAGE_BUCKET = 'art-retrieval-api-234614.appspot.com'
 def get_file_from_cloud_storage(filename):
     
     # Create a Cloud Storage client.
-    gcs = storage.Client()
+    gcs = storage.Client(project="art-retrieval-api-234614")
 
     # https://console.cloud.google.com/storage/browser/[bucket-id]/
     bucket = gcs.get_bucket(CLOUD_STORAGE_BUCKET)
@@ -23,7 +23,7 @@ def get_file_from_cloud_storage(filename):
 
 def upload_blob(filename, filestr, content_type):
     """Uploads a file to the bucket."""
-    storage_client = storage.Client()
+    storage_client = storage.Client(project="art-retrieval-api-234614")
     bucket = storage_client.get_bucket(CLOUD_STORAGE_BUCKET)
     blob = bucket.blob(filename)
     
