@@ -30,39 +30,50 @@ class ArtworkSequenceRNN(Resource):
     def post(self):
         """Encode artwork"""
         data = file_upload_list.parse_args()
-        if data['image_file'] == "":
-            return {
-                    'data':'',
-                    'message':'No file found',
-                    'status':'error'
-                    }
-        photo = data['image_file']
-
-        if photo and self.allowed_file(photo.filename):
-            filename = secure_filename(photo.filename)
-            img_str = photo.read()
-            #Upload image to cloud storage
-            upload_blob(filename, img_str, photo.content_type)
-
-            #Define similarity measure
-            sim_measure = Cosine_similarity()
-            #sim_measure = Wasserstein_similarity()
-
-            #Define sort algorithm
-            sort_algorithm = Naive_sort()
-            #sort_algorithm = Social_influence_sort()
-
-            #Define Artwork retrieval service
-            artwork_sequence_rnn_service = Artwork_sequence_rnn_service(sim_measure, sort_algorithm)
-            
-            return {
-                #pass image as str
-                'sim_artworks': artwork_sequence_rnn_service.predict(img_str)
-                }
         
-        return {
+        window_images = []
+        #Get window images
+        image_one = data['image_file_one']
+        image_two = data['image_file_two']
+        image_three = data['image_file_three']
+
+        window_images.append(image_one)
+        window_images.append(image_two)
+        window_images.append(image_three)
+
+        #Check no empty file
+        for img in window_images:
+            if img == "":
+                return {
+                        'data':'',
+                        'message':'No file found',
+                        'status':'error'
+                        }
+        
+        #Create a window for input model
+        window_matrix_input = []
+        for img in window_images:
+            if img and self.allowed_file(img.filename):
+                filename = secure_filename(img.filename)
+                img_str = img.read()
+                #Upload image to cloud storage
+                upload_blob(filename, img_str, img.content_type)
+                window_matrix_input.append(img_str)
+            else:
+                return {
                 'data':'',
                 'message':'Something when wrong',
                 'status':'error'
                 }
+
+
+        #Define Artwork sequence RNN service
+        artwork_sequence_rnn_service = Artwork_sequence_rnn_service()
+        
+
+        return {
+            #pass image as str
+            'sim_artworks': artwork_sequence_rnn_service.predict_tour(window_matrix_input)
+            }
+    
 

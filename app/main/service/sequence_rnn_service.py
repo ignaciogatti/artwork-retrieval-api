@@ -1,14 +1,13 @@
-import tensorflow as tf
-from tensorflow.python.keras.models import load_model
 import pandas as pd
 import numpy as np
 import cv2  # for image processing
 import os.path
+import tensorflow as tf
+from tensorflow.python.keras.models import load_model
 from os import listdir
 from ..utils.logger import write_cloud_logger
 from ..utils.image_utils import get_image
-from .abstract_artwork_retrieval_service import Abstract_artwork_retrieval_service
-
+from ..utils_sequence.sequence_generation_rnn import Sequence_generator_rnn
 
 
 MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
@@ -23,41 +22,32 @@ denoisy_model = {
 }
 
 
+class Artwork_sequence_rnn_service:
 
-#TF-IDF model
-TFIDF_MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'tfidf_matrix.npy' )
-
-tfidf_model = {
-    'matrix' : TFIDF_MATRIX_FILE_NAME
-}
-
-
-
-class Artwork_sequence_rnn_service(Abstract_artwork_retrieval_service):
-
-    def __init__(self, sim_measure, sort_algorithm):
-        super().__init__(sim_measure, sort_algorithm)
-        self.name = "Artwork_retrieval_generic_service"
-        #load code matrix model
-        self.artwork_code_matrix = np.load( denoisy_model['matrix'] )
-
-        #load tfidf matrix model
-        self.artwork_tfidf_matrix = np.load( tfidf_model['matrix'], allow_pickle = True )
-        #Because it is a sparse matrix and it was saved into an array
-        self.artwork_tfidf_matrix = self.artwork_tfidf_matrix.reshape((-1))[0]
-
-
-    def predict(self, filestr):
-
-        image_norm = get_image(filestr)
+    def __init__(self):
+        self.name = "Artwork_sequence_rnn_service"
+        #load sequence RNN mdoel
+        self._sequence_rnn_model = Sequence_generator_rnn()
         #load Auto-encoder model
-        autoencoder_model = load_model(denoisy_model['model_encoder'])
-        code = autoencoder_model.predict(image_norm).reshape((-1,))
-        #Find artwork with the most similar code
-        sim_matrix = self.sim_measure.get_similarity_measure_matrix(code, self.artwork_code_matrix)
-        artwork_index = np.argsort(sim_matrix)[0,-1]
+        self._autoencoder_model = load_model(denoisy_model['model_encoder'])
 
-        tfidf_code = self.artwork_tfidf_matrix[artwork_index,:]
+
+    def predict_tour(self, window_images):
+
+        #Define window for sequence RNN input
+        img_codes =[]
+        for img_str in window_images:
+
+            image_norm = get_image(img_str)
+            #Get the code for the input image
+            code = self._autoencoder_model.predict(image_norm).reshape((-1,))
+            img_codes.append(code)  
+        x_tour_matrix = np.stack(img_codes)
+
+        print(x_tour_matrix.shape)
+        #Predict tour
+        self._sequence_rnn_model.set_tour(x_tour_matrix)
+        #tour_predicted = self._sequence_rnn_model.predict_tour()
         #os.remove(image_path)
         
-        return self.get_sim_artworks(tfidf_code, self.artwork_tfidf_matrix)
+        return 'tour predicted'

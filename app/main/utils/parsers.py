@@ -10,9 +10,20 @@ file_upload.add_argument('image_file',
                          help='Image file')
 
 file_upload_list = reqparse.RequestParser()
-file_upload_list.add_argument('image_file_list',  
+file_upload_list.add_argument('image_file_one',  
                          type=FileStorage, 
                          location='files', 
                          required=True,
-                         action='append', 
-                         help='Image files list')
+                         help='Image files one')
+
+file_upload_list.add_argument('image_file_two',  
+                         type=FileStorage, 
+                         location='files', 
+                         required=True,
+                         help='Image files two')
+
+file_upload_list.add_argument('image_file_three',  
+                         type=FileStorage, 
+                         location='files', 
+                         required=True,
+                         help='Image files three')
