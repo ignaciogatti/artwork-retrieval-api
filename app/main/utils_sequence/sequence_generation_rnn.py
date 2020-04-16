@@ -7,29 +7,26 @@ from .Prediction_model_feature import Prediction_model_feature
 from .abstract_sequence_rnn import Abstract_sequence_rnn
 
 
-
-MODEL_DIR = os.path.join(os.getcwd(), 'static/model/sequence_RNN')
-
+BASE_MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
+MODEL_DIR = os.path.join(BASE_MODEL_DIR, 'sequence_RNN')
 
 
 
 WINDOW_INDEX = 3
 #Sequence RNN model
 museum_sequence_path = {
-    'x_train' : os.path.join(MODEL_DIR, 'X_train.csv'),
     'x_test' : os.path.join(MODEL_DIR, 'X_test.csv'),
-    'x_train_matrix' : os.path.join(MODEL_DIR, 'X_train_matrix.npy'),
     'x_test_matrix' : os.path.join(MODEL_DIR, 'X_test_matrix.npy'),
     'weights_folder' : os.path.join(MODEL_DIR, 'config_'+str(WINDOW_INDEX)+'/trained_model_weights'),
-    'all_metadata' : os.path.join(MODEL_DIR, 'all_metadata.csv'),
-    'all_data_matrix' : os.path.join(MODEL_DIR, 'all_code_matrix.npy' )
+    'all_metadata' : os.path.join(BASE_MODEL_DIR, 'train_mayors_style_encoded_with_url.csv'),
+    'all_data_matrix' : os.path.join(BASE_MODEL_DIR, 'train_mayors_style_encode.npy' )
 }
 
 
 class Sequence_generator_rnn(Abstract_sequence_rnn):
     
-    def __init__(self, batch_size=128, shuffle_buffer_size=300, conv_filter=16, lstm_filter=32, dense_filter=16):
-        super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, conv_filter, lstm_filter, dense_filter)
+    def __init__(self, batch_size=128, shuffle_buffer_size=300, conv_filter=16, lstm_filter=32, dense_filter=16, prediction_length=10):
+        super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, conv_filter, lstm_filter, dense_filter, prediction_length)
         self.models = self._load_model()
     
     

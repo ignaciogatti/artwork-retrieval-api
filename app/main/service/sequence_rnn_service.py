@@ -47,7 +47,18 @@ class Artwork_sequence_rnn_service:
         print(x_tour_matrix.shape)
         #Predict tour
         self._sequence_rnn_model.set_tour(x_tour_matrix)
-        #tour_predicted = self._sequence_rnn_model.predict_tour()
+        df_tour_predicted = self._sequence_rnn_model.predict_tour()
+
+        top_ten = df_tour_predicted[['title', 'artist', 'imageUrl']].transpose().to_dict()
+        values = list(top_ten.values())
+        
+        result = []
+        for i in range(len(top_ten)):
+            values[i]['id'] = list(top_ten.keys())[i]
+            result.append(values[i])
+
+        return result
+
         #os.remove(image_path)
         
-        return 'tour predicted'
+        return result
