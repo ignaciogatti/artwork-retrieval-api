@@ -27,24 +27,21 @@ class Abstract_sequence_rnn(ABC):
         
 
     @abstractmethod    
-    def _create_rnn_model(self, i):
+    def _create_rnn_model(self):
         pass
     
     
     def _load_model(self):
         self._n_features = self._X.shape[1]
-        self._models = []
-        for i in range(self._n_features):
-            #Create model
-            model_prediction = self._create_rnn_model(i)
-            
-            model_prediction.define_model(conv_filter=self._conv_filter, lstm_filter=self._lstm_filter, dense_filter=self._dense_filter, prediction_length=self._prediction_length)
-            #Load weights
-            model_prediction.load_weights(self._museum_sequence_path)
-            
-            self._models.append(model_prediction)
-            
-        return self._models
+        #Create model
+        self._model = self._create_rnn_model()
+        self._model.define_model(
+            conv_filter=self._conv_filter, 
+            lstm_filter=self._lstm_filter, 
+            dense_filter=self._dense_filter, 
+            prediction_length=self._prediction_length
+            )
+        return self._model
     
     
     
@@ -73,7 +70,11 @@ class Abstract_sequence_rnn(ABC):
             x_feature = tf.expand_dims(x_feature, axis=0)
     
             #Predict feature i
-            rnn_forecast = self._models[feature].get_model().predict(x_feature)
+            #Load weights for feature i
+            self._model.set_index(feature)
+            self._model.load_weights(self._museum_sequence_path)
+
+            rnn_forecast = self._model.get_model().predict(x_feature)
             rnn_forecast = rnn_forecast.reshape((-1))
             
             predicted_features.append(rnn_forecast)
@@ -154,7 +155,7 @@ class Abstract_sequence_rnn(ABC):
     
     
     def get_model(self):
-        return self._models
+        return self._model
     
     
     def set_tour(self, X_tour):

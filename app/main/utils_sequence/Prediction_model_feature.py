@@ -63,15 +63,14 @@ class Windowed_Dataset:
 class Prediction_model_feature:
     
     
-    def __init__(self, X, window_size, train_batch_size, val_batch_size, shuffle_buffer, name, index, n_features=1):
+    def __init__(self, X, window_size, train_batch_size, val_batch_size, shuffle_buffer, n_features=1):
         self._X = X
         self._window_size = window_size
         self._train_batch_size = train_batch_size
         self._val_batch_size = val_batch_size
         self._shuffle_buffer = shuffle_buffer
-        self._name = name
         self._n_features = n_features
-        self._index = index
+        self._index = 0
         self._model = None
 
     
@@ -92,11 +91,14 @@ class Prediction_model_feature:
             tf.keras.layers.Dense(dense_filter//2, activation="relu"),
             tf.keras.layers.Dense(prediction_length),
             tf.keras.layers.Lambda(lambda x: x * 400)
-        ],
-        name=self._name.replace(' ', '_'))
+        ])
         
         return self._model
     
+
+    def set_index(self, index):
+        self._index = index
+
     
     def _define_x_features(self):
         self._x_features = self._X[:, self._index]

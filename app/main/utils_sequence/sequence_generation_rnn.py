@@ -27,16 +27,15 @@ class Sequence_generator_rnn(Abstract_sequence_rnn):
     
     def __init__(self, batch_size=128, shuffle_buffer_size=300, conv_filter=16, lstm_filter=32, dense_filter=16, prediction_length=10):
         super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, conv_filter, lstm_filter, dense_filter, prediction_length)
-        self.models = self._load_model()
+        self._model = self._load_model()
     
     
-    def _create_rnn_model(self, i):
+    def _create_rnn_model(self):
         return Prediction_model_feature(
                 X=self._X[:, 0],
                 train_batch_size=self._batch_size, 
                 val_batch_size=self._batch_size, 
                 window_size=self._window_size, 
-                shuffle_buffer=self._shuffle_buffer_size,
-                index = i,
-                name="feature " + str(0))
+                shuffle_buffer=self._shuffle_buffer_size
+                )
         
