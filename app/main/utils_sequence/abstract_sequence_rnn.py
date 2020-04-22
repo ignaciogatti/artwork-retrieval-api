@@ -63,17 +63,16 @@ class Abstract_sequence_rnn(ABC):
         
         predicted_features = []
         for feature in range(self._n_features):
-            
+            #Load weights for feature i
+            self._model.set_index(feature)
+            self._model.load_weights(self._museum_sequence_path)
+
             #Reshape to be a valid input for the model
             x_feature = self._X_tour[:,feature]
             x_feature = tf.expand_dims(x_feature, axis=-1)
             x_feature = tf.expand_dims(x_feature, axis=0)
     
             #Predict feature i
-            #Load weights for feature i
-            self._model.set_index(feature)
-            self._model.load_weights(self._museum_sequence_path)
-
             rnn_forecast = self._model.get_model().predict(x_feature)
             rnn_forecast = rnn_forecast.reshape((-1))
             
@@ -140,7 +139,7 @@ class Abstract_sequence_rnn(ABC):
         self._df_predicted_tour = self._df_predicted_tour.set_index('id')
         return self._df_predicted_tour
     
-    #7 minutes
+
     def get_predicted_tour_matrix(self):
         #No tour predicted because the window size was too big
         if len(self._predicted_code_list) == 0:

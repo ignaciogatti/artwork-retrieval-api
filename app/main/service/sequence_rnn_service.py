@@ -49,6 +49,9 @@ class Artwork_sequence_rnn_service:
         self._sequence_rnn_model.set_tour(x_tour_matrix)
         df_tour_predicted = self._sequence_rnn_model.predict_tour()
 
+        #Drop artworks without valid url
+        df_tour_predicted = df_tour_predicted.dropna(subset=['imageUrl'])
+
         top_ten = df_tour_predicted[['title', 'artist', 'imageUrl']].transpose().to_dict()
         values = list(top_ten.values())
         
