@@ -8,6 +8,7 @@ from ..utils.parsers import file_upload
 from ..utils.logger import write_cloud_logger
 from ..utils.storage_utils import upload_blob
 from ..service.artwork_retrieval_service import Artwork_retrieval_service
+from ..service.code_emb_artwork_retrieval_service import Code_Embedding_Artwork_retrieval_service
 from ..utils.similarity_measure import Cosine_similarity, Wasserstein_similarity
 from ..utils.sort_utils import Naive_sort, Social_influence_sort
 
@@ -49,11 +50,12 @@ class ArtworkCodeMatrix(Resource):
             #sim_measure = Wasserstein_similarity()
 
             #Define sort algorithm
-            sort_algorithm = Naive_sort()
-            #sort_algorithm = Social_influence_sort()
+            #sort_algorithm = Naive_sort()
+            sort_algorithm = Social_influence_sort()
 
             #Define Artwork retrieval service
-            artwork_retrieval_service = Artwork_retrieval_service(sim_measure, sort_algorithm)
+            #artwork_retrieval_service = Artwork_retrieval_service(sim_measure, sort_algorithm)
+            artwork_retrieval_service = Code_Embedding_Artwork_retrieval_service(sim_measure, sort_algorithm)
             
             return {
                 #pass image as str
