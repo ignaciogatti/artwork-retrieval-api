@@ -9,7 +9,7 @@ from ..utils.logger import write_cloud_logger
 from ..utils.storage_utils import upload_blob
 from ..service.artwork_retrieval_service import Artwork_retrieval_service
 from ..utils.similarity_measure import Cosine_similarity, Wasserstein_similarity
-from ..utils.sort_utils import Naive_sort
+from ..utils.sort_utils import Social_influence_sort
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -17,7 +17,7 @@ BASE_DIR = os.path.join(os.getcwd(),'static/img')
 
 api = ArtworkDto.api
 
-@api.route('/encoder/predict/')
+@api.route('/social_graph/predict/')
 class ArtworkCodeMatrix(Resource):
 
 
@@ -25,7 +25,7 @@ class ArtworkCodeMatrix(Resource):
         return ('.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS)
 
     
-    @api.doc('code_matrix_artworks')
+    @api.doc('social_graph_artworks')
     @api.expect(file_upload)
     def post(self):
         """Encode artwork"""
@@ -49,7 +49,7 @@ class ArtworkCodeMatrix(Resource):
             #sim_measure = Wasserstein_similarity()
 
             #Define sort algorithm
-            sort_algorithm = Naive_sort()
+            sort_algorithm = Social_influence_sort()
 
             #Define Artwork retrieval service
             artwork_retrieval_service = Artwork_retrieval_service(sim_measure, sort_algorithm)

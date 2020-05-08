@@ -25,7 +25,7 @@ museum_sequence_path = {
 
 class Sequence_generator_rnn(Abstract_sequence_rnn):
     
-    def __init__(self, batch_size=128, shuffle_buffer_size=300, conv_filter=16, lstm_filter=32, dense_filter=20, prediction_length=15):
+    def __init__(self, batch_size=128, shuffle_buffer_size=300, conv_filter=20, lstm_filter=40, dense_filter=20, prediction_length=12):
         super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, conv_filter, lstm_filter, dense_filter, prediction_length)
         self._model = self._load_model()
     
