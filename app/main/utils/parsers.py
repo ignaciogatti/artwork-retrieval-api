@@ -9,6 +9,8 @@ file_upload.add_argument('image_file',
                          required=True, 
                          help='Image file')
 
+file_upload.add_argument('userId')
+
 file_upload_list = reqparse.RequestParser()
 file_upload_list.add_argument('image_file_one',  
                          type=FileStorage, 

@@ -72,6 +72,7 @@ class ArtworkSequenceRNN(Resource):
         
 
         return {
+            'file_id': '',
             #pass image as str
             'sim_artworks': artwork_sequence_rnn_service.predict_tour(window_matrix_input)
             }
