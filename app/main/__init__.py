@@ -6,6 +6,7 @@ from .controller.cb_artwork_retrieval_controller import api as cb_encode_ns
 from .controller.code_emb_artwork_retrieval_controller import api as code_emb_encode_ns
 from .controller.social_graph_artwork_retrieval_controller import api as social_graph_encode_ns
 from .controller.sequence_rnn_controller import api as sequence_rnn_ns
+from .controller.sequence_most_similar_controller import api as sequence_most_similar_ns
 from .controller.impressionism_classifier_controller import api as impressionism_classifier_ns
 
 
@@ -24,3 +25,4 @@ api.add_namespace(cb_encode_ns, path='/artwork')
 api.add_namespace(sequence_rnn_ns, path='/artwork')
 api.add_namespace(code_emb_encode_ns, path='/artwork')
 api.add_namespace(social_graph_encode_ns, path='/artwork')
+api.add_namespace(sequence_most_similar_ns, path='/artwork')

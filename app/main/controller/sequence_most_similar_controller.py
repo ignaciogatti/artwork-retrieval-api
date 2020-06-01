@@ -7,7 +7,7 @@ from ..utils.dto import ArtworkDto
 from ..utils.parsers import file_upload_list
 from ..utils.logger import write_cloud_logger
 from ..utils.storage_utils import upload_blob
-from ..service.sequence_rnn_service import Artwork_sequence_rnn_service
+from ..service.sequence_most_similar_service import Artwork_sequence_most_similar_service
 from ..utils.similarity_measure import Cosine_similarity, Wasserstein_similarity
 from ..utils.sort_utils import Naive_sort, Social_influence_sort
 
@@ -17,15 +17,15 @@ BASE_DIR = os.path.join(os.getcwd(),'static/img')
 
 api = ArtworkDto.api
 
-@api.route('/sequence/rnn/predict/')
-class ArtworkSequenceRNN(Resource):
+@api.route('/sequence/mostsimilar/predict/')
+class ArtworkSequenceMostSimilar(Resource):
 
 
     def allowed_file(self, filename):
         return ('.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS)
 
     
-    @api.doc('sequence_rnn_artworks')
+    @api.doc('sequence_most_similar_artworks')
     @api.expect(file_upload_list)
     def post(self):
         """Encode artwork"""
@@ -67,14 +67,14 @@ class ArtworkSequenceRNN(Resource):
                 }
 
 
-        #Define Artwork sequence RNN service
-        artwork_sequence_rnn_service = Artwork_sequence_rnn_service()
+        #Define Artwork sequence most similar service
+        artwork_sequence_most_similar_service = Artwork_sequence_most_similar_service()
         
 
         return {
             'file_id': '',
             #pass image as str
-            'sim_artworks': artwork_sequence_rnn_service.predict_tour(window_matrix_input)
+            'sim_artworks': artwork_sequence_most_similar_service.predict_tour(window_matrix_input)
             }
     
 
