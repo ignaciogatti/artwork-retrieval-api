@@ -57,7 +57,10 @@ class Abstract_sequence_rnn(ABC):
         code_matrix = np.delete(code_matrix, indexes, 0)
 
         return df_removed, code_matrix
-    
+
+    @abstractmethod
+    def _define_x_features(self, feature):
+        pass    
 
     def _predict_features(self):
         
@@ -67,10 +70,8 @@ class Abstract_sequence_rnn(ABC):
             self._model.set_index(feature)
             self._model.load_weights(self._museum_sequence_path)
 
-            #Reshape to be a valid input for the model
-            x_feature = self._X_tour[:,feature]
-            x_feature = tf.expand_dims(x_feature, axis=-1)
-            x_feature = tf.expand_dims(x_feature, axis=0)
+            #Define feature to take into account for prediction
+            x_feature = self._define_x_features(feature)
     
             #Predict feature i
             rnn_forecast = self._model.get_model().predict(x_feature)

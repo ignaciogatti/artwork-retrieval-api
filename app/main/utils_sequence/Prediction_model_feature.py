@@ -85,7 +85,7 @@ class Prediction_model_feature:
                                   strides=1, padding="causal",
                                   activation="relu",
                                   input_shape=[self._window_size, self._n_features]),
-           # tf.keras.layers.LSTM(lstm_filter, return_sequences=True),
+            tf.keras.layers.LSTM(lstm_filter, return_sequences=True),
             tf.keras.layers.LSTM(lstm_filter//2),
             tf.keras.layers.Dense(dense_filter, activation="relu"),
             tf.keras.layers.Dense(dense_filter//2, activation="relu"),
