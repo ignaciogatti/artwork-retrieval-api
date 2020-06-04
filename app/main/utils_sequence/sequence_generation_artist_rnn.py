@@ -71,7 +71,7 @@ class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
         nearest_index_sort = np.abs(self._all_artist_code_matrix - p).argsort()
 
         #Find most similar
-        return list(self._df_all_artists.iloc[nearest_index_sort[:2]]['author'].values)    
+        return list(self._df_all_artists.iloc[nearest_index_sort[:5]]['author'].values)    
 
 
 
@@ -111,7 +111,10 @@ class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
 
             #Compute cosine similarity
             #The last feature is artist feature
-            sim_matrix = cosine_similarity(code[:-1].reshape((1,-1)), artist_work_matrix)
+            if artist_work_matrix.shape[0] != 0:
+                sim_matrix = cosine_similarity(code[:-1].reshape((1,-1)), artist_work_matrix)
+            else:
+                sim_matrix = cosine_similarity(code[:-1].reshape((1,-1)), all_data_matrix)
 
             #sort indexes
             sort_index = np.argsort(sim_matrix.reshape((-1,)))

@@ -45,6 +45,7 @@ class CB_Artwork_retrieval_service(Abstract_artwork_retrieval_service):
         self.artwork_tfidf_matrix = np.load( tfidf_model['matrix'], allow_pickle = True )
         #Because it is a sparse matrix and it was saved into an array
         self.artwork_tfidf_matrix = self.artwork_tfidf_matrix.reshape((-1))[0]
+        print(self.artwork_tfidf_matrix.shape)
 
 
     def predict(self, filestr):
