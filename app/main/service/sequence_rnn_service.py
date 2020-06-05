@@ -16,8 +16,12 @@ MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
 MODEL_PATH = os.path.join(MODEL_DIR, 'denoisy_encoder.h5')
 MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encode.npy' )
 
-denoisy_model = {
+ALL_METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded_with_url.csv' )
+
+
+model = {
     'model_encoder' : MODEL_PATH,
+    'metadata' : ALL_METADATA_FILE_NAME,
     'matrix' : MATRIX_FILE_NAME
 }
 
@@ -26,10 +30,14 @@ class Artwork_sequence_rnn_service:
 
     def __init__(self):
         self.name = "Artwork_sequence_rnn_service"
-        #load sequence RNN mdoel
-        self._sequence_rnn_model = Sequence_generator_rnn()
+        #Load all metadata
+        self._all_metadata = pd.read_csv(model['metadata'])
         #load Auto-encoder model
-        self._autoencoder_model = load_model(denoisy_model['model_encoder'])
+        self._autoencoder_model = load_model(model['model_encoder'])
+        #load matrix model
+        self._artwork_code_matrix = np.load( model['matrix'] )
+        #load sequence RNN mdoel
+        self._sequence_rnn_model = Sequence_generator_rnn(self._all_metadata, self._artwork_code_matrix)
 
 
     def predict_tour(self, window_images):

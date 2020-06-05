@@ -11,12 +11,12 @@ from ..utils_sequence.Prediction_model_feature import Prediction_model_feature
 
 class Abstract_sequence_rnn(ABC):
     
-    def __init__(self, window_size, museum_sequence_path, batch_size, shuffle_buffer_size, conv_filter=16, lstm_filter=32, dense_filter=16, prediction_length=1):
+    def __init__(self, window_size, museum_sequence_path, batch_size, shuffle_buffer_size, df_all_metadata, all_data_matrix, conv_filter=16, lstm_filter=32, dense_filter=16, prediction_length=1):
         self._name= "Sequence_generator_rnn"
         self._museum_sequence_path = museum_sequence_path
         self._window_size = window_size
-        self._df_all_metadata = pd.read_csv(self._museum_sequence_path['all_metadata'])
-        self._all_data_matrix = np.load(self._museum_sequence_path['all_data_matrix'])
+        self._df_all_metadata = df_all_metadata
+        self._all_data_matrix = all_data_matrix
         self._X = np.load(self._museum_sequence_path['x_test_matrix'])
         self._batch_size = batch_size
         self._shuffle_buffer_size = shuffle_buffer_size

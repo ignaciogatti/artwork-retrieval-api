@@ -17,6 +17,8 @@ MODEL_DIR = os.path.join(os.getcwd(), 'static/model')
 MODEL_PATH = os.path.join(MODEL_DIR, 'denoisy_encoder.h5')
 MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encode.npy' )
 
+ALL_METADATA_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_encoded_with_url.csv' )
+
 # Embedding matrix
 EMB_MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_embedding.npy' )
 
@@ -25,6 +27,7 @@ ARITST_CODE_MATRIX_FILE_NAME = os.path.join( MODEL_DIR, 'train_mayors_style_arti
 
 model = {
     'model_encoder' : MODEL_PATH,
+    'metadata' : ALL_METADATA_FILE_NAME,
     'matrix' : MATRIX_FILE_NAME,
     'emb_matrix' : EMB_MATRIX_FILE_NAME,
     'artist_code_matrix' : ARITST_CODE_MATRIX_FILE_NAME
@@ -35,26 +38,29 @@ class Artwork_sequence_artist_rnn_service:
 
     def __init__(self):
         self.name = "Artwork_sequence_artist_rnn_service"
-        #load sequence RNN mdoel
-        self._sequence_rnn_model = Sequence_generator_artist_rnn()
         #load Auto-encoder model
         self._autoencoder_model = load_model(model['model_encoder'])
 
         #Create a similarity measure object
         self.sim_measure = Cosine_similarity()
+
+        #Load all metadata
+        self._all_metadata = pd.read_csv(model['metadata'])
     
         #load matrix model
         self.artwork_code_matrix = np.load( model['matrix'] )
         #load embedding matrix model
         self.embedding_code_matrix = np.load( model['emb_matrix'] )
-        self.artist_code_matrix = np.load( model['artist_code_matrix'] )
         #Combine code with embeddings
         self.code_emb_matrix = np.hstack((self.artwork_code_matrix, self.embedding_code_matrix))
 
         #Reduce artist code matrix
-        self.artist_code_matrix = np.mean(self.artist_code_matrix, axis=1)
-
+        self.artist_code_matrix = np.load( model['artist_code_matrix'] )
         self.artist_code_emb_matrix = np.hstack((self.code_emb_matrix, self.artist_code_matrix.reshape((-1, 1))))
+
+        #load sequence RNN mdoel
+        self._sequence_rnn_model = Sequence_generator_artist_rnn(self._all_metadata, self.artwork_code_matrix, self.embedding_code_matrix)
+
 
 
     def predict_tour(self, window_images):

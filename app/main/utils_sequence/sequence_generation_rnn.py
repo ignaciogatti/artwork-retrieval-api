@@ -18,16 +18,14 @@ WINDOW_INDEX = 3
 museum_sequence_path = {
     'x_test' : os.path.join(CONFIG_DIR, 'X_test.csv'),
     'x_test_matrix' : os.path.join(CONFIG_DIR, 'X_test_matrix.npy'),
-    'weights_folder' : os.path.join(SEQUENCE_MODEL_DIR, 'config_'+str(WINDOW_INDEX)+'/trained_model_weights'),
-    'all_metadata' : os.path.join(BASE_MODEL_DIR, 'train_mayors_style_encoded_with_url.csv'),
-    'all_data_matrix' : os.path.join(BASE_MODEL_DIR, 'train_mayors_style_encode.npy' )
+    'weights_folder' : os.path.join(SEQUENCE_MODEL_DIR, 'config_'+str(WINDOW_INDEX)+'/trained_model_weights')
 }
 
 
 class Sequence_generator_rnn(Abstract_sequence_rnn):
     
-    def __init__(self, batch_size=128, shuffle_buffer_size=300, conv_filter=20, lstm_filter=40, dense_filter=20, prediction_length=15):
-        super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, conv_filter, lstm_filter, dense_filter, prediction_length)
+    def __init__(self, df_all_metadata, all_data_matrix, batch_size=128, shuffle_buffer_size=300, conv_filter=20, lstm_filter=40, dense_filter=20, prediction_length=15):
+        super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, df_all_metadata, all_data_matrix, conv_filter, lstm_filter, dense_filter, prediction_length)
         self._model = self._load_model()
     
     

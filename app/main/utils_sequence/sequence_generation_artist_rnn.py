@@ -21,10 +21,6 @@ museum_sequence_path = {
 
     'weights_folder' : os.path.join(SEQUENCE_MODEL_DIR, 'config_'+str(WINDOW_INDEX)+'/trained_model_weights'),
 
-    'all_metadata' : os.path.join(BASE_MODEL_DIR, 'train_mayors_style_encoded_with_url.csv'),
-    'all_data_matrix' : os.path.join(BASE_MODEL_DIR, 'train_mayors_style_encode.npy' ),
-    'all_data_embedding_matrix' : os.path.join(BASE_MODEL_DIR, 'train_mayors_style_embedding.npy' ),
-
     'all_artist_metadata' : os.path.join(BASE_MODEL_DIR, 'all_artists.csv'),
     'all_artist_code_matrix' : os.path.join(BASE_MODEL_DIR, 'all_artists_code_matrix.npy')
 }
@@ -32,13 +28,13 @@ museum_sequence_path = {
 
 class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
     
-    def __init__(self, batch_size=128, shuffle_buffer_size=300, conv_filter=20, lstm_filter=40, dense_filter=20, prediction_length=15):
-        super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, conv_filter, lstm_filter, dense_filter, prediction_length)
+    def __init__(self, df_all_metadata, all_data_matrix, all_data_embedding_matrix, batch_size=128, shuffle_buffer_size=300, conv_filter=20, lstm_filter=40, dense_filter=20, prediction_length=15):
+        super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, df_all_metadata, all_data_matrix, conv_filter, lstm_filter, dense_filter, prediction_length)
         print(self._X.shape)
         self._model = self._load_model()
 
         #Load embedding data
-        self._all_data_embedding_matrix = np.load(museum_sequence_path['all_data_embedding_matrix'])
+        self._all_data_embedding_matrix = all_data_embedding_matrix
         #Append embedding data to code data
         self._all_data_matrix = np.hstack((self._all_data_matrix, self._all_data_embedding_matrix))
 

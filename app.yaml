@@ -3,7 +3,7 @@ entrypoint: gunicorn -b :$PORT main:app --timeout 1800
 #runtime: custom
 #env: flex
 
-instance_class: B4_HIGHMEM
+instance_class: B8
 basic_scaling:
   max_instances: 11
   idle_timeout: 10m
