@@ -59,7 +59,7 @@ class Artwork_sequence_artist_rnn_service:
         self.artist_code_emb_matrix = np.hstack((self.code_emb_matrix, self.artist_code_matrix.reshape((-1, 1))))
 
         #load sequence RNN mdoel
-        self._sequence_rnn_model = Sequence_generator_artist_rnn(self._all_metadata, self.artwork_code_matrix, self.embedding_code_matrix)
+        self._sequence_rnn_model = Sequence_generator_artist_rnn(self._all_metadata, self.artist_code_emb_matrix)
 
 
 
@@ -77,13 +77,8 @@ class Artwork_sequence_artist_rnn_service:
             sim_matrix = self.sim_measure.get_similarity_measure_matrix(code, self.artwork_code_matrix)
             artwork_index = np.argsort(sim_matrix)[0,-1]
 
-            #Append most similar embedding code
-            embedding_code = self.embedding_code_matrix[artwork_index,:]            
-            code_emb = np.hstack((code, embedding_code))
-            
-            #Append most similar artist code
-            artist_code = self.artist_code_matrix[artwork_index]
-            artist_code_emb = np.hstack((code_emb, artist_code))
+            #Append most similar embedding and artist code
+            artist_code_emb = self.artist_code_emb_matrix[artwork_index,:]            
 
             img_codes.append(artist_code_emb)  
         x_tour_matrix = np.stack(img_codes)

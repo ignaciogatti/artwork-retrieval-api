@@ -28,20 +28,14 @@ museum_sequence_path = {
 
 class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
     
-    def __init__(self, df_all_metadata, all_data_matrix, all_data_embedding_matrix, batch_size=128, shuffle_buffer_size=300, conv_filter=20, lstm_filter=40, dense_filter=20, prediction_length=15):
+    def __init__(self, df_all_metadata, all_data_matrix, batch_size=128, shuffle_buffer_size=300, conv_filter=20, lstm_filter=40, dense_filter=20, prediction_length=15):
         super().__init__(WINDOW_INDEX, museum_sequence_path, batch_size, shuffle_buffer_size, df_all_metadata, all_data_matrix, conv_filter, lstm_filter, dense_filter, prediction_length)
         print(self._X.shape)
         self._model = self._load_model()
 
-        #Load embedding data
-        self._all_data_embedding_matrix = all_data_embedding_matrix
-        #Append embedding data to code data
-        self._all_data_matrix = np.hstack((self._all_data_matrix, self._all_data_embedding_matrix))
-
         #Load artist data 
         self._df_all_artists = pd.read_csv(museum_sequence_path['all_artist_metadata'])
         self._all_artist_code_matrix = np.load(museum_sequence_path['all_artist_code_matrix'])
-        self._all_artist_code_matrix = np.mean(self._all_artist_code_matrix, axis=1)
     
     
     def _create_rnn_model(self):
@@ -61,15 +55,26 @@ class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
         x_feature = tf.expand_dims(x_feature, axis=0)
         return x_feature   
 
+
+    
     def _get_most_similar_artist(self, p):
     
         #Find nearest value. Try to take a couple
         nearest_index_sort = np.abs(self._all_artist_code_matrix - p).argsort()
 
         #Find most similar
-        return list(self._df_all_artists.iloc[nearest_index_sort[:5]]['author'].values)    
+        return list(self._df_all_artists.iloc[nearest_index_sort[:50]]['author'].values)    
+    
 
+    '''
+    def _get_most_similar_artist(self, p):
 
+        #Find nearest value. Try to take a couple
+        nearest_index_sort = np.abs(self._all_data_matrix[:,-1] - p).argsort()
+
+        #Find most similar
+        return nearest_index_sort[:100]    
+    '''
 
     def predict_tour(self):
         
@@ -82,10 +87,11 @@ class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
               'sim_value' : [],
               'imageUrl':[]})
        
-        ##List with the artworks's code that belongs to the tour
+        #List with the artworks's code that belongs to the tour
         self._predicted_code_list =[]
 
-        
+        #List with the artwokk's indexes already appended
+        indexes_appended_list = []
                 
         #Made a copy of the data to keep the data safe
         df_all_metadata = self._df_all_metadata.copy()
@@ -101,16 +107,23 @@ class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
             code = self._forecast_matrix[i]
 
             #Define a valid subset
+            
             artists = self._get_most_similar_artist(code[-1])
-            df_artist_work = df_artist_work = df_all_metadata[df_all_metadata['artist'].isin(artists)]
-            artist_work_matrix =all_data_matrix[df_all_metadata[df_all_metadata['artist'].isin(artists)].index]
+            artists_indexes = self._df_all_metadata[self._df_all_metadata['artist'].isin(artists)].index
+
+            #artists_indexes = self._get_most_similar_artist(code[-1])
+
+            #Drop artwork's indexes that already are part of the tour
+            for index in indexes_appended_list:
+                artists_indexes = artists_indexes[artists_indexes != index]
+
+
+            artist_work_matrix =self._all_data_matrix[artists_indexes]    
 
             #Compute cosine similarity
             #The last feature is artist feature
-            if artist_work_matrix.shape[0] != 0:
-                sim_matrix = cosine_similarity(code[:-1].reshape((1,-1)), artist_work_matrix)
-            else:
-                sim_matrix = cosine_similarity(code[:-1].reshape((1,-1)), all_data_matrix)
+            sim_matrix = cosine_similarity(code[:-1].reshape((1,-1)), artist_work_matrix[:,:-1])
+            
 
             #sort indexes
             sort_index = np.argsort(sim_matrix.reshape((-1,)))
@@ -120,19 +133,19 @@ class Sequence_generator_artist_rnn(Abstract_sequence_rnn):
 
             #Save in dataframe 
             self._df_predicted_tour = self._df_predicted_tour.append(
-                {'id' : int(df_all_metadata.iloc[sim_artwork_index].name),
-                 'title' : df_all_metadata.iloc[sim_artwork_index]['title'],
-                 'artist': df_all_metadata.iloc[sim_artwork_index]['artist'],
-                 'imageUrl':df_all_metadata.iloc[sim_artwork_index]['imageUrl'],
+                {'id' : int(self._df_all_metadata.iloc[sim_artwork_index].name),
+                 'title' : self._df_all_metadata.iloc[sim_artwork_index]['title'],
+                 'artist': self._df_all_metadata.iloc[sim_artwork_index]['artist'],
+                 'imageUrl':self._df_all_metadata.iloc[sim_artwork_index]['imageUrl'],
                  'sim_value':sim_matrix[:,sim_artwork_index][0]
                 }, 
                ignore_index=True)
 
             #Save predicted artwork's code
-            self._predicted_code_list.append(all_data_matrix[sim_artwork_index])
+            self._predicted_code_list.append(self._all_data_matrix[sim_artwork_index])
 
-            #Remove selected artworks
-            df_all_metadata, all_data_matrix = self._drop_selected_artwork([sim_artwork_index], df_all_metadata, all_data_matrix)
+            #Save predicted artwork's index
+            indexes_appended_list.append(sim_artwork_index)
 
         self._df_predicted_tour = self._df_predicted_tour.set_index('id')
         return self._df_predicted_tour
