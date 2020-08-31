@@ -10,6 +10,7 @@ from ..utils.storage_utils import upload_blob
 from ..service.sequence_most_similar_service import Artwork_sequence_most_similar_service
 from ..utils.similarity_measure import Cosine_similarity, Wasserstein_similarity
 from ..utils.sort_utils import Naive_sort, Social_influence_sort
+from ..utils.mongodb_utils import insert_user_image_key
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -37,6 +38,9 @@ class ArtworkSequenceMostSimilar(Resource):
         image_two = data['image_file_two']
         image_three = data['image_file_three']
 
+        #Get userId
+        userId = data['userId']
+
         window_images.append(image_one)
         window_images.append(image_two)
         window_images.append(image_three)
@@ -51,6 +55,7 @@ class ArtworkSequenceMostSimilar(Resource):
                         }
         
         #Create a window for input model
+        file_id = ''
         window_matrix_input = []
         for img in window_images:
             if img and self.allowed_file(img.filename):
@@ -59,6 +64,12 @@ class ArtworkSequenceMostSimilar(Resource):
                 #Upload image to cloud storage
                 upload_blob(filename, img_str, img.content_type)
                 window_matrix_input.append(img_str)
+
+                #Link image with the user
+                if userId != None:
+                    inserted_id = insert_user_image_key(userId, filename)
+                    file_id += filename+'|'
+
             else:
                 return {
                 'data':'',
@@ -70,9 +81,13 @@ class ArtworkSequenceMostSimilar(Resource):
         #Define Artwork sequence most similar service
         artwork_sequence_most_similar_service = Artwork_sequence_most_similar_service()
         
+        #Complete the file id name
+        if userId != None:
+            file_id += userId
+        
 
         return {
-            'file_id': '',
+            'file_id': str(file_id),
             #pass image as str
             'sim_artworks': artwork_sequence_most_similar_service.predict_tour(window_matrix_input)
             }

@@ -29,3 +29,5 @@ file_upload_list.add_argument('image_file_three',
                          location='files', 
                          required=True,
                          help='Image files three')
+
+file_upload_list.add_argument('userId')
