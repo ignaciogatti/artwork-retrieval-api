@@ -52,7 +52,7 @@ class ArtworkCodeMatrix(Resource):
             file_id = ''
             if userId != None:
                 inserted_id = insert_user_image_key(userId, filename)
-                file_id = inserted_id
+                file_id = file_id = filename+'|'+userId
 
             #Define similarity measure
             sim_measure = Cosine_similarity()

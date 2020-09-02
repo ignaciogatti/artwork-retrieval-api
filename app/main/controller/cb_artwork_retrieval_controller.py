@@ -55,7 +55,7 @@ class CBArtworkCodeMatrix(Resource):
             file_id = ''
             if userId != None:
                 inserted_id = insert_user_image_key(userId, filename)
-                file_id = inserted_id
+                file_id = filename+'|'+userId
                 
 
 
