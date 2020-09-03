@@ -56,7 +56,8 @@ class Artwork_sequence_most_similar_service:
         values = list(top_ten.values())
         
         result = []
-        for i in range(len(top_ten)):
+        #15 it is length for the sequence recomendation
+        for i in range(min(15, len(top_ten))):
             values[i]['id'] = list(top_ten.keys())[i]
             result.append(values[i])
 
